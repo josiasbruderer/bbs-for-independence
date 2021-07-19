@@ -1,3 +1,7 @@
 title: From BBS to the Declaration of the Independence of Cyberspace
+name: &name "Josias Bruderer"
 theme: jekyll-theme-hacker
-github: [metadata]
+repository: "josiasbruderer/bbs-for-independence"
+author:
+  name: "Josias Bruderer"
+  github: "josiasbruderer"
