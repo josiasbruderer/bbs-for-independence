@@ -1,3 +1,10 @@
+# General tmp directories
+.tmp
+*/.tmp/*
+
+# zettlr
+.ztr-directory
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

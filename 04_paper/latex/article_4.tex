@@ -1,0 +1,238 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Arsclassica Article
+% LaTeX Template
+% Version 1.1 (1/8/17)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Lorenzo Pantieri (http://www.lorenzopantieri.net) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+$FONT_SIZE$, % Main document font size
+$PAPER_TYPE$, % Paper type, use 'letterpaper' for US Letter paper
+oneside, % One page layout (no page indentation)
+%twoside, % Two page layout (page indentation for binding and different headers)
+headinclude,footinclude, % Extra spacing for the header and footer
+BCOR5mm, % Binding correction
+nswissgerman,
+]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\DeclareTextCommand{\nobreakspace}{T1}{\leavevmode\nobreak\ }
+
+%----------------------------------------------------------------------------------------
+%	REQUIRED PACKAGES
+%----------------------------------------------------------------------------------------
+% The following packages are needed for the combined use of Pandoc and XeTeX engine
+\usepackage{fontspec,xltxtra,xunicode}
+
+% These directives are necessary for Pandoc to correctly set the language of the
+% document. If the user uses XeLaTeX (the default for Zettlr), it will use
+% polyglossia, else it will use babel. We've simply copied that from the default
+% template -- thanks to the Pandoc community at this point!
+\ifxetex
+  \usepackage{polyglossia}
+  \setmainlanguage[variant=swiss]{german}
+\else
+  \usepackage[shorthands=off,main=nswissgerman]{babel}
+\fi
+
+\usepackage{csquotes}
+
+% Captions for tables and images
+\usepackage{caption}
+\captionsetup{format=plain, font=small, labelfont=bf, skip=10pt}
+
+% These packages are needed by pandoc for certain special glyphs, such as the
+% \square symbol for checkboxes.
+\usepackage{amssymb,amsmath}
+
+% Calc is needed to compute the image width (to prevent up-scaling of small images)
+\usepackage{calc}
+
+% ulem is needed for underlining and strikethrough text commands.
+% the option "normalem" is needed to preserve _italics_. Without the option,
+% _italics_ will become underlines, which is not desirable.
+\usepackage[normalem]{ulem}
+
+% Image scaling code from pandoc default.latex template
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+
+\usepackage[
+nochapters, % Turn off chapters since this is an article        
+beramono, % Use the Bera Mono font for monospaced text (\texttt)
+eulermath,% Use the Euler font for mathematics
+%pdfspacing, % Makes use of pdftex’ letter spacing capabilities via the microtype package
+dottedtoc % Dotted lines leading to the page numbers in the table of contents
+]{classicthesis} % The layout is based on the Classic Thesis style
+
+\usepackage{arsclassica} % Modifies the Classic Thesis package
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+
+\usepackage[utf8]{inputenc} % Required for including letters with accents
+
+\usepackage{graphicx} % Required for including images
+\graphicspath{{attachements/}} % Set the default folder for images
+\usepackage{float}
+\floatplacement{figure}{H} % ensure default position as H (exactly where the figure is in the text)
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+\usepackage{enumitem} % Required for manipulating the whitespace between and within lists
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{subfig} % Required for creating figures with multiple parts (subfigures)
+
+\usepackage{longtable, booktabs, array}
+\renewcommand{\linethickness}{0.05em}
+
+%\usepackage{amsmath,amssymb,amsthm} % For including math equations, theorems, symbols, etc
+
+\usepackage{varioref} % More descriptive referencing
+
+\usepackage[
+ a4paper,
+ left=$LEFT_MARGIN$,
+ right=$RIGHT_MARGIN$,
+ top=$TOP_MARGIN$,
+ bottom=$BOTTOM_MARGIN$,
+]{geometry}
+
+\usepackage[marginal]{footmisc}
+
+\usepackage{setspace}
+
+\setstretch{$LINE_SPACING$}
+
+\providecommand{\tightlist}{
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\titleformat{\section}
+    {\relax}{\textsc{\MakeTextLowercase{\thesection}}}{1em}{\normalsize}
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+%----------------------------------------------------------------------------------------
+%	THEOREM STYLES
+%---------------------------------------------------------------------------------------
+
+%\theoremstyle{definition} % Define theorem styles here based on the definition style (used for definitions and examples)
+%\newtheorem{definition}{Definition}
+
+%\theoremstyle{plain} % Define theorem styles here based on the plain style (used for theorems, lemmas, propositions)
+%\newtheorem{theorem}{Theorem}
+
+%\theoremstyle{remark} % Define theorem styles here based on the remark style (used for remarks and notes)
+
+%----------------------------------------------------------------------------------------
+%	HYPERLINKS
+%---------------------------------------------------------------------------------------
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true, 
+	breaklinks=true, 
+	bookmarks=true, 
+	bookmarksnumbered=true, 
+	bookmarksopen=true,
+	plainpages=false, 
+	pdfpagelabels=true,
+	urlcolor=black, 
+	linkcolor=black, 
+	citecolor=black, 
+	filecolor=black, % Link colors
+	pdftitle={$PDF_TITLE$}, % PDF title
+	pdfauthor={$PDF_AUTHOR$}, % PDF Author
+	pdfsubject={$PDF_SUBJECT$}, % PDF Subject
+	pdfkeywords={$PDF_KEYWORDS$}, % PDF Keywords
+	pdfcreator={pdfLaTeX}, % PDF Creator
+	pdfproducer={LaTeX with hyperref and ClassicThesis} % PDF producer
+}
+
+\usepackage{bookmark}
+
+\hyphenation{Ge-dächt-nis} % Specify custom hyphenation points in words with dashes where you would like hyphenation to occur, or alternatively, don't put any dashes in a word to stop hyphenation altogether
+
+%----------------------------------------------------------------------------------------
+%	TITLE AND AUTHOR(S)
+%----------------------------------------------------------------------------------------
+
+\title{\normalfont\spacedallcaps{$PDF_TITLE$}} % The article title
+
+\author{\normalfont\small{$PDF_AUTHOR$}}
+
+%\date{} % An optional date to appear under the author(s)
+
+%----------------------------------------------------------------------------------------
+%	Fix for Pandoc 2.8
+%----------------------------------------------------------------------------------------
+
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{CSLReferences}%
+{$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
+\everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
+{\par}
+$endif$
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	HEADERS
+%----------------------------------------------------------------------------------------
+
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+%\renewcommand{\sectionmark}[1]{\markright{#1}} % The header for all pages (oneside) or for even pages (twoside)
+% \renewcommand{\subsectionmark}[1]{\markright{#1}}
+%\renewcommand{\subsectionmark}[1]{\markright{\thesubsection~#1}} % Uncomment when using the twoside option - this modifies the header on odd pages
+\lehead{\mbox{\llap{\small\thepage\kern1em\color{halfgray} \vline}\color{halfgray}\hspace{0.5em}\rightmark\hfil}} % The header style
+
+\pagestyle{scrheadings} % Enable the headers specified in this block
+
+$body$
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+%\renewcommand{\refname}{\spacedlowsmallcaps{References}} % For modifying the bibliography heading
+
+%\bibliographystyle{unsrt}
+
+%\bibliography{sample.bib} % The file containing the bibliography
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
