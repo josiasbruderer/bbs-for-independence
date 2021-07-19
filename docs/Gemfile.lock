@@ -129,6 +129,10 @@ GEM
       rouge (>= 2.0, < 4.0)
     jekyll-default-layout (0.1.4)
       jekyll (~> 3.0)
+    jekyll-favicon (1.0.0.pre.3)
+      jekyll (>= 3.0, < 5.0)
+      mini_magick (~> 4.11)
+      rexml (~> 3.2, >= 3.2.5)
     jekyll-feed (0.15.1)
       jekyll (>= 3.7, < 5.0)
     jekyll-gist (1.5.0)
@@ -217,6 +221,7 @@ GEM
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     mercenary (0.3.6)
+    mini_magick (4.11.0)
     mini_portile2 (2.5.3)
     minima (2.5.1)
       jekyll (>= 3.5, < 5.0)
@@ -275,6 +280,7 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages
+  jekyll-favicon (~> 1.0.0.pre.3)
 
 BUNDLED WITH
    2.2.24
