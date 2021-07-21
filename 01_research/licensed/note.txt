@@ -1,0 +1,1 @@
+Many articles, ebooks and scans won't be published on github because of license concerns. Please check 01_research/Quellen.md for a summary of the researched sources.

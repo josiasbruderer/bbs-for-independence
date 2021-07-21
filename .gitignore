@@ -1,6 +1,6 @@
 # Licensed Articles and Books won't be uploaded to github
 01_research/licensed/*
-!01_research/licensed/list.txt
+!01_research/licensed/note.txt
 
 # General tmp directories
 .tmp
