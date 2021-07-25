@@ -2,6 +2,14 @@
 01_research/licensed/*
 !01_research/licensed/note.txt
 
+# datasets
+02_datasets/*
+!02_datasets/note.txt
+
+# pyCharm IDE and virtual environment
+.idea
+.envs
+
 # General tmp directories
 .tmp
 */.tmp/*
