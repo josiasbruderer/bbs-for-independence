@@ -1,3 +1,19 @@
+## Overviewing the sources
+_Josias, 09.08.2021_
+
+While going through the researched sources some first comments were written down. It will help to keep an overview. The comments are highlighted in:
+
+[01_research/Quellen.md](https://github.com/josiasbruderer/bbs-for-independence/commit/f18fd198322d7aa7b67d8a497f8bde0ec1224f35){:target="_blank"}
+
+Some sources focus on web 2.0 and social media in general. This was helpful insofar that a comparison between the functionality of BBS and social media could be made. Also there are sources like the text of Schmidt and Taddicken (2017) about social media, space and time or Weyers chapters about realtime society (2019) that are interesting but quite off-topic. These  will be an excursus at most. 
+
+What really helped were the text about NLP (Bender & Koller 2020; Graham, Milligan & Weingart 2016, Merrill et al. 2021), especially to get an idea what is possible and where the limits of NLP. The chapter of Mützel, Saner and Unternährer (2018) will be important in terms of cleaning up data. And last but not least many sources focus on explaining BBS and how the world around BBS was (Dvorak 1990, Turner 2006), the impact of the declaration (Bennett & Strange 2016, Fassler 2008). 
+
+And to close: Reading the sources for this HSA won't stop me from digging into other articles that pops up. Like [A Field Guide for Nature-Resistant Nerds](https://www.wired.com/story/a-field-guide-for-nature-resistant-nerds-microchips-climate-change/){:target="_blank"}:
+
+> Part of the privilege of being a nerd is that you're able to forget you have a body: You cruise around cyberspace, get a beverage out of the fridge, cruise some more. [...] And after a while you realize that science itself is just an API to nature, a bunch of kludges and observations that work well enough to get the job done. 
+(Paul Ford @ Wired, 06.08.2021)
+
 ## Ready to (re-)read!
 _Josias, 21.07.2021_
 
