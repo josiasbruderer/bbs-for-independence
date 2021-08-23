@@ -1,7 +1,8 @@
-## Some Title
-_Josias, 10.08.2021_
+## Taking Shape
+_Josias, 23.08.2021_
 
-- Gedanken in Einleitung (Draft) niedergeschrieben, Quellen sortiert, 
+The paper is getting its shape: The theoretical part is more or less in a final state and the methodological part is not far from being done. It took quite some time and energy to think through all the stuff and getting into writing. And I have to admit, the research was way to interesting and I collected more information than I could write about... Good thing is that it gave me an Idea of the topic i'd like to write my BA-Paper about.  
+
 
 ## Overviewing the sources
 _Josias, 09.08.2021_
