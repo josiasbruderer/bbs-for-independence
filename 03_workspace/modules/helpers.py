@@ -7,3 +7,6 @@
 # date:   TODO
 # desc:   this module provides some useful functions
 ##########################################################
+
+def chunker_list(seq, size):
+    return (seq[i::size] for i in range(size))
