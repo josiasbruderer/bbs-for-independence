@@ -17,21 +17,9 @@ The following lines of code is used for preparing our environment.
 # load the necessary libraries
 
 import sys
-import threading
 import time
 from pathlib import Path
-import textacy
-import spacy
-import re
-import itertools
-import numpy as np
-import scattertext as st
-import pandas as pd
 
-from pathlib import Path
-from plotnine import *
-#import textacy.vsm #this does not work... TODO
-#run: ./.envs/bin/python -m spacy download en_core_web_sm
 
 project_path = Path.cwd()
 
@@ -108,7 +96,11 @@ while running:
             print("waiting for threads to finish...")
             time.sleep(5)
         else:
-            dataset = dataset + thread.data
+            if thread.data:
+                dataset = dataset + thread.data
+                helpers.save_object(thread.data, tmp_dir.joinpath(str("-".join(thread.data_names) + ".pkl")))
+
+helpers.save_object(dataset, tmp_dir.joinpath("dataset.pkl"))
 
 # write metadata to csv file
 print("Write dataset to csv")
