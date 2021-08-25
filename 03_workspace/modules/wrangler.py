@@ -56,11 +56,11 @@ class cleaner(Thread):
         Thread.__init__(self)
         self.data_dir = data_dir
         self.data_names = data_names
-        self.data = []
+        self.data = {}
 
     def run(self):
         for data_name in self.data_names:
-            self.data = self.get_texts(Path(self.data_dir, data_name))
+            self.data[data_name] = self.get_texts(Path(self.data_dir, data_name))
 
     def get_texts(self, dir_texts):
         """
