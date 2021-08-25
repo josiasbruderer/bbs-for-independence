@@ -46,7 +46,7 @@ data_names_exclude = ["fidonet-on-the-internet"]
 
 # to use the full list: 
 data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
-              "drugs", "etext", "exhibits", "fidonet-on-the-internet", "floppies", "food", "fun", "games", "groups",
+              "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups",
               "hacking", "hamradio", "history", "holiday", "humor", "internet", "law", "magazines", "media", "messages",
               "music", "news", "occult", "phreak", "piracy", "politics", "programming", "reports", "rpg", "science",
               "sex", "sf", "stories", "survival", "tap", "ufo", "uploads", "virus"]  # the categories to download
@@ -72,11 +72,11 @@ while running:
         if thread.is_alive():
             running = True
             print("waiting for threads to finish...")
-            time.sleep(5)
+            time.sleep(1)
 
 # prepare the threads for cleaning up stuff
 threads = []
-dataset = []
+dataset = {}
 
 # prepare the threads
 for names in helpers.chunker_list(data_names, number_of_threads):
@@ -94,11 +94,12 @@ while running:
         if thread.is_alive():
             running = True
             print("waiting for threads to finish...")
-            time.sleep(5)
+            time.sleep(1)
         else:
             if thread.data:
-                dataset = dataset + thread.data
-                helpers.save_object(thread.data, tmp_dir.joinpath(str("-".join(thread.data_names) + ".pkl")))
+                dataset.update(thread.data)
+                for d in thread.data:
+                    helpers.save_object(thread.data[d], tmp_dir.joinpath(str(d + ".pkl")))
 
 helpers.save_object(dataset, tmp_dir.joinpath("dataset.pkl"))
 
@@ -106,18 +107,19 @@ helpers.save_object(dataset, tmp_dir.joinpath("dataset.pkl"))
 print("Write dataset to csv")
 f = open(tmp_dir.joinpath("top100_generated.csv"), "w+")
 f.write("name,length,length_raw,avgcolumnsize,charratioA,charratioB,year,eyear,lyear,type\r\n")
-for item in dataset:
-    f.write(item["metadata"]["name"]+","+
-            str(item["metadata"]["length"])+","+
-            str(item["metadata"]["length_raw"])+","+
-            str(item["metadata"]["avgcolumnsize"])+","+
-            str(item["metadata"]["charratioA"])+","+
-            str(item["metadata"]["charratioB"])+","+
-            str(item["metadata"]["year"])+","+
-            str(item["metadata"]["eyear"])+","+
-            str(item["metadata"]["lyear"])+","+
-            str(item["metadata"]["type"])+","+
-            "\r\n")
+for d in dataset:
+    for item in dataset[d]:
+        f.write(item["metadata"]["name"]+","+
+                str(item["metadata"]["length"])+","+
+                str(item["metadata"]["length_raw"])+","+
+                str(item["metadata"]["avgcolumnsize"])+","+
+                str(item["metadata"]["charratioA"])+","+
+                str(item["metadata"]["charratioB"])+","+
+                str(item["metadata"]["year"])+","+
+                str(item["metadata"]["eyear"])+","+
+                str(item["metadata"]["lyear"])+","+
+                str(item["metadata"]["type"])+","+
+                "\r\n")
 f.close()
 
 print("data downloaded successfully")
