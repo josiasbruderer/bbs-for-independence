@@ -4,7 +4,7 @@
 ##########################################################
 # title:  datawrangler
 # author: Josias Bruderer
-# date:   26.05.2021
+# date:   27.08.2021
 # desc:   this module takes care of all tasks that are
 #         related to juggling files and datasets.
 ##########################################################
@@ -48,7 +48,7 @@ def daterange(lst, t="r"):
         else:
             return str(ltmp2[0])
     else:
-        return "nd."
+        return "NA"
 
 class cleaner(Thread):
 
@@ -86,17 +86,14 @@ class cleaner(Thread):
                 content = re.sub('[\\\\\^\[\]]', ' ', content)
 
                 # add more metadata here if needed
-                if len(re.findall("[^A-z]", content_raw)) == 0:
+                # charratio: 0 = no character is "text", 1 = every character is "text"
+                if len(content_raw) == 0:
                     charratioA = 0
-                else:
-                    charratioA = round(len(re.findall("[A-z]", content_raw))
-                                       / len(re.findall("[^A-z]", content_raw)), 2)
-
-                if len(re.findall("[^A-z\ \.\"\,\!]", content_raw)) == 0:
                     charratioB = 0
                 else:
-                    charratioB = round(len(re.findall("[A-z\ \.\"\,\!]", content_raw))
-                                       / len(re.findall("[^A-z\ \.\"\,\!]", content_raw)), 2)
+                    charratioA = round(1 / len(content_raw) * len(re.findall("[A-z]", content_raw)), 2)
+                    charratioB = round(1 / len(content_raw) * len(re.findall("[A-z\ \.\"\,\!]", content_raw)), 2)
+
                 typ = "textfile"
                 if fname.name == "declarationbarlow1996.txt":
                     typ = "declaration"
@@ -107,6 +104,7 @@ class cleaner(Thread):
                 matches = rxdate.findall(content, re.IGNORECASE)
 
                 metadata = {'name': fname.name,
+                            'path': str(fname),
                             'length_raw': len(content_raw),
                             'length': len(content),
                             'avgcolumnsize': averageLen(content_raw.splitlines()),
