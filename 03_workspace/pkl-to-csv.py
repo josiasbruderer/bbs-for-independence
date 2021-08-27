@@ -26,7 +26,7 @@ from modules import helpers
 
 tmp = helpers.load_object(sys.argv[1])
 
-if tmp[0]["metadata"]:
+if isinstance(tmp, list):
     dataset = {}
     dataset["unknown"] = tmp
 else:
