@@ -1,0 +1,17 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+# Read dataset summary from csv
+library(readr)
+dataset <- read_csv("../.tmp/dataset.csv")
+
+# Check the average of length, length_raw, avgcolumnsize, charratioA and charratioB
+aggregate(dataset[, 3:7], list(dataset$category), mean)
+
+
+
+```
+
