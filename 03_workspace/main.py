@@ -109,7 +109,7 @@ f = open(tmp_dir.joinpath("top100_generated.csv"), "w+")
 f.write("name,length,length_raw,avgcolumnsize,charratioA,charratioB,year,eyear,lyear,type\r\n")
 for d in dataset:
     for item in dataset[d]:
-        f.write(item["metadata"]["name"]+","+
+        f.write(d + "," + str(item["metadata"]["name"])+","+
                 str(item["metadata"]["length"])+","+
                 str(item["metadata"]["length_raw"])+","+
                 str(item["metadata"]["avgcolumnsize"])+","+
