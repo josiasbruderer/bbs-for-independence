@@ -21,7 +21,6 @@ import time
 from pathlib import Path
 import textacy
 import spacy
-#run: ./.envs/bin/python -m spacy download en_core_web_sm
 
 
 project_path = Path.cwd()
@@ -33,6 +32,7 @@ if project_path not in sys.path:
 # import modules
 from modules import wrangler
 from modules import helpers
+from modules import nlp_pool
 
 
 # Data Wrangling [R2]
@@ -153,10 +153,8 @@ elif "modeling" not in skip_steps:
     print("data loaded from dataset_filtered.pkl")
 
 if "modeling" not in skip_steps:
-    print("lets get modeling started")
-
     en = textacy.load_spacy_lang("en_core_web_sm")
-
+    en.max_length = 10000000 # enable utilization of ~ 100GB RAM
     # create corpus from processed documents
     corpus = textacy.Corpus(en, data=None)
     for key in dataset:
@@ -165,14 +163,17 @@ if "modeling" not in skip_steps:
 
     print("corpus loaded")
     corpus.save(tmp_dir.joinpath("corpus.bin.gz"))
+
+
 elif "analysis" not in skip_steps:
     # load corpus.bin.gz because it was not generate during runtime
     corpus = textacy.Corpus.load("en_core_web_sm", tmp_dir.joinpath("corpus.bin.gz"))
     print("data loaded from corpus.bin.gz")
 
+
 if "analysis" not in skip_steps:
     # get lowercased and filtered corpus vocabulary (R3.3.1)
-    vocab = corpus.word_counts(by='lemma_', filter_stops = True, filter_punct = True, filter_nums = True)
+    vocab = corpus.word_counts(by='lemma_', filter_stops=True, filter_punct=True, filter_nums=True)
 
     # sort vocabulary by descending frequency
     vocab_sorted = sorted(vocab.items(), key=lambda x: x[1], reverse=True)
