@@ -21,6 +21,8 @@ import time
 from pathlib import Path
 import textacy
 import spacy
+from multiprocessing import Pool
+from multiprocessing.managers import BaseManager
 
 
 project_path = Path.cwd()
@@ -33,7 +35,6 @@ if project_path not in sys.path:
 from modules import wrangler
 from modules import helpers
 from modules import nlp_pool
-
 
 # Data Wrangling [R2]
 """
@@ -153,23 +154,26 @@ elif "modeling" not in skip_steps:
     print("data loaded from dataset_filtered.pkl")
 
 if "modeling" not in skip_steps:
-    en = textacy.load_spacy_lang("en_core_web_sm")
-    en.max_length = 10000000 # enable utilization of ~ 100GB RAM
-    # create corpus from processed documents
-    corpus = textacy.Corpus(en, data=None)
-    for key in dataset:
-        for d in dataset[key]:
-            corpus.add(textacy.make_spacy_doc((d["content"], d["metadata"]), lang="en_core_web_sm"))
+    t0 = time.time()
+    print("start building corpus")
+    BaseManager.register('PoolCorpus', nlp_pool.PoolCorpus)
 
-    print("corpus loaded")
-    corpus.save(tmp_dir.joinpath("corpus.bin.gz"))
+    if __name__ == '__main__':
+        with BaseManager() as manager:
+            corp = manager.PoolCorpus()
 
-
+            with Pool(processes=number_of_threads) as pool:
+                for key in dataset:
+                    pool.map(corp.add, ((d["content"], d["metadata"]) for d in dataset[key]))
+            corpus = corp.get()
+            print("corpus loaded")
+            corpus.save(tmp_dir.joinpath("corpus.bin.gz"))
+    print("end building corpus")
+    print("Time elapsed: ", time.time() - t0,"s")  # CPU seconds elapsed (floating point)
 elif "analysis" not in skip_steps:
     # load corpus.bin.gz because it was not generate during runtime
     corpus = textacy.Corpus.load("en_core_web_sm", tmp_dir.joinpath("corpus.bin.gz"))
     print("data loaded from corpus.bin.gz")
-
 
 if "analysis" not in skip_steps:
     # get lowercased and filtered corpus vocabulary (R3.3.1)
