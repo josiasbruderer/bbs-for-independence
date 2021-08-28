@@ -6,6 +6,7 @@ output:
 editor_options:
   chunk_output_type: console
 ---
+
 # Preparation
 
 ```{r message=FALSE, warning=FALSE}
@@ -23,6 +24,7 @@ library(ggplot2)
 library(tidyverse)
 library(hrbrthemes)
 library(dplyr)
+library(scales)
 
 # and set the working directory
 setwd("~/projects/bbs-for-independence/03_workspace")
@@ -30,7 +32,7 @@ setwd("~/projects/bbs-for-independence/03_workspace")
 
 # Import Data
 
-```{r}
+```{r warning=FALSE}
 # Read dataset summary from csv
 dataset <- read_csv("../.tmp/dataset.csv", show_col_types = FALSE)
 dataset$charratioDelta = dataset$charratioB - dataset$charratioA
@@ -38,23 +40,70 @@ dataset$charratioDelta = dataset$charratioB - dataset$charratioA
 
 # Prepare Data
 
-```{r}
+```{r warning=FALSE}
 # Check the average of length, length_raw, avgcolumnsize, charratioA and charratioB
-groups = aggregate(dataset[, c(4,5,6,7,8,13)], list(dataset$category), FUN = function(x) round(mean(suppressWarnings(as.numeric(as.character(x))), na.rm=TRUE), digits = 2))
+df = aggregate(x = dataset[, c(4,5,6,7,8,13)], 
+               by = list(dataset$category), 
+               FUN = function(x) list(
+                 mean = round(mean(suppressWarnings(as.numeric(as.character(x))), na.rm=TRUE), digits = 2), 
+                 n = length(x)))
+df <- do.call(data.frame, df) # bind columns which contain matrices back into the data frame
+df <- as.data.frame(lapply(df, unlist)) # convert lists back to vectors
 
+f_selection <- dataset %>% filter(!category %in% c("tap", "floppies", "exhibits", "artifacts", 
+                                          "piracy", "art", "magazines", "digest"))
+f_magazins <- dataset %>% filter(category == "magazines")
+f_digest <- dataset %>% filter(category == "digest")
+
+fun_charratioB_selection <- Vectorize( function(x) { nrow(f_selection %>% filter(charratioB > x)) } )
+fun_charratioB_magazins <- Vectorize( function(x) { nrow(f_magazins %>% filter(charratioB > x)) } )
+fun_charratioB_digest <- Vectorize( function(x) { nrow(f_digest %>% filter(charratioB > x)) } )
+
+data_fun <- data.frame(x = seq(0,1,0.01),
+                       n = c(fun_charratioB_selection(seq(0,1,0.01)),
+                                  fun_charratioB_magazins(seq(0,1,0.01)),
+                                  fun_charratioB_digest(seq(0,1,0.01))),
+                       categories = rep(c("selection", "magazins", "digest"), each = 101))
+```
+
+\newpage
+
+# Summarize Data
+
+```{r warning=FALSE}
 cat("Anzahl Dateien: ", nrow(dataset))
-cat("Anzahl Kategorien: ", nrow(groups))
+cat("Anzahl Kategorien: ", nrow(df))
+cat("Anzahl Dateien bei Filterung von tap, art, floppies, piracy, exhibits, magazines, digest:", nrow(f_selection))
+cat("Anzahl Dateien bei zusätzlicher Filterung von charratioB >0.95:", fun_charratioB_selection(0.95))
 
-groups %>% arrange(desc(charratioB))
+# draw curve for fun_charratioB
+ggplot(data_fun, aes(x, n, col = categories)) +
+  geom_line() + 
+  xlim(0.8, 1) +
+  scale_y_continuous(trans = log10_trans()) +
+  ggtitle("n files if charratioB > x on a log10 scale")
+
+datatable(df %>%
+  arrange(desc(charratioB.mean)) %>%
+  select(Group.1, length.n, length.mean, length_raw.mean, avgcolumnsize.mean,
+        charratioA.mean, charratioB.mean, charratioDelta.mean),
+  options = list( 
+    pageLength = 50,
+    initComplete = JS("function(settings, json) {
+                      $(this.api().table().header()).css({'font-size' : '12px'});
+                      $('table.dataTable thead th').css({'padding' : '10px 18px 10px 0px'});
+                      }")
+    )
+  )
 ```
 
 \newpage
 
 # Plots
  
-## Verhältnis Text (exkl. Satz- und Leerzeichen) zu Sonderzeichen
+## Verhältnis Text (exkl. Satz- und Leerzeichen) zu Dateilänge
 
-```{r, fig.width=8, fig.height=10}
+```{r fig.height=9, fig.width=8, warning=FALSE}
 dataset %>%
   ggplot( aes(x=reorder(category, charratioA, FUN = median), 
               y=charratioA, group=category)) +
@@ -71,9 +120,11 @@ dataset %>%
     ylab("Verhältnis")
 ```
 
-## Verhältnis Text (inkl. Satz- und Leerzeichen) zu Sonderzeichen
+\newpage
 
-```{r, fig.width=8, fig.height=10}
+## Verhältnis Text (inkl. Satz- und Leerzeichen) zu Dateilänge
+
+```{r fig.height=9, fig.width=8, warning=FALSE}
 # create plot: charratioB
 dataset %>%
   ggplot( aes(x=reorder(category, charratioB, FUN = median), 
@@ -91,9 +142,11 @@ dataset %>%
     ylab("Verhältnis")
 ```
 
-## Differenz beiden Verhältnissen (inkl. minus exkl. Satz- und Leerzeichen zu Sonderzeichen)
+\newpage
 
-```{r, fig.width=8, fig.height=10}
+## Differenz beiden Verhältnissen (inkl. minus exkl. Satz- und Leerzeichen zu Dateilänge)
+
+```{r fig.height=9, fig.width=8, warning=FALSE}
 dataset %>%
   ggplot( aes(x=reorder(category, charratioA-charratioB, FUN = median), 
               y=charratioB-charratioA, group=category)) +
