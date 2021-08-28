@@ -1,3 +1,26 @@
+## The Power of R
+_Josias, 28.08.2021_
+
+I faced a new challenge: I was aware already that i will need to implement some way of filtering and I had an rough idea how to do it. The difficult part was to find out the categories and parameter that were suited. I got an anwer using R (of course I could have done it with Python but I knew how to handle data with R, so why not using R this time...). I realized that charratioB will be the best choice, so I checked which categories to filter:
+
+![charratioB](/assets/images/charratioB_01.png)
+
+The categories: tap, floppies, exhibits, artifacts, piracy, art, fidonet-on-the-interne will be filtered. This reduces the total of 102'971 files to 44'832.
+
+And the second thing was to find a good value to filter charratioB - I'm still not sure really if 0.95 is a good choice but that's at least what my server should be able to process: 7'241 files could be possible to work with.
+
+![charratioB](/assets/images/charratioB_02.png)
+
+So long... ;-)
+
+Oh and I forgt: the full report can be found in: [03_workspace/dataset_statistics.html](https://github.com/josiasbruderer/bbs-for-independence/blob/e81a2b07181f2f90eea6bc948fb0c956923698b7/03_workspace/dataset_statistics.html){:target="_blank"}
+
+## Taking Shape
+_Josias, 23.08.2021_
+
+The paper is getting its shape: The theoretical part is more or less in a final state and the methodological part is not far from being done. It took quite some time and energy to think through all the stuff and getting into writing. And I have to admit, the research was way to interesting and I collected more information than I could write about... Good thing is that it gave me an Idea of the topic i'd like to write my BA-Paper about.  
+
+
 ## Overviewing the sources
 _Josias, 09.08.2021_
 
