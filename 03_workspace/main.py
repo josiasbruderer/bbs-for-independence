@@ -19,6 +19,9 @@ The following lines of code is used for preparing our environment.
 import sys
 import time
 from pathlib import Path
+import textacy
+import spacy
+#run: ./.envs/bin/python -m spacy download en_core_web_sm
 
 
 project_path = Path.cwd()
@@ -39,7 +42,7 @@ The module data_wrangler will be used for this.
 """
 
 number_of_threads = 24
-skip_steps = ["download", "cleaning", "netadata-filtering"]
+skip_steps = ["download", "cleaning", "metadata-filtering"]
 data_url = "http://archives.textfiles.com/[name].zip"
 data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
               "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups", "hacking", "hamradio",
@@ -126,12 +129,12 @@ if "cleaning" not in skip_steps:
     f.close()
 
     print("data cleaned successfully")
-else:
+elif "metadata-filtering" not in skip_steps:
     # load dataset_full.pkl because it was not generate during runtime
     dataset = helpers.load_object(tmp_dir.joinpath("dataset_full.pkl"))
     print("data loaded from dataset_full.pkl")
 
-if "netadata-filtering" not in skip_steps:
+if "metadata-filtering" not in skip_steps:
     for key in data_names_exclude:
         if key in dataset:
             del dataset[key]
@@ -144,10 +147,38 @@ if "netadata-filtering" not in skip_steps:
         dataset[key] = d_tmp
 
     helpers.save_object(dataset, tmp_dir.joinpath("dataset_filtered.pkl"))
-else:
+elif "modeling" not in skip_steps:
     # load dataset_filtered.pkl because it was not generate during runtime
     dataset = helpers.load_object(tmp_dir.joinpath("dataset_filtered.pkl"))
     print("data loaded from dataset_filtered.pkl")
 
 if "modeling" not in skip_steps:
     print("lets get modeling started")
+
+    en = textacy.load_spacy_lang("en_core_web_sm")
+
+    # create corpus from processed documents
+    corpus = textacy.Corpus(en, data=None)
+    for key in dataset:
+        for d in dataset[key]:
+            corpus.add(textacy.make_spacy_doc((d["content"], d["metadata"]), lang="en_core_web_sm"))
+
+    print("corpus loaded")
+    corpus.save(tmp_dir.joinpath("corpus.bin.gz"))
+elif "analysis" not in skip_steps:
+    # load corpus.bin.gz because it was not generate during runtime
+    corpus = textacy.Corpus.load("en_core_web_sm", tmp_dir.joinpath("corpus.bin.gz"))
+    print("data loaded from corpus.bin.gz")
+
+if "analysis" not in skip_steps:
+    # get lowercased and filtered corpus vocabulary (R3.3.1)
+    vocab = corpus.word_counts(by='lemma_', filter_stops = True, filter_punct = True, filter_nums = True)
+
+    # sort vocabulary by descending frequency
+    vocab_sorted = sorted(vocab.items(), key=lambda x: x[1], reverse=True)
+
+    # write to file, one word and its frequency per line
+    with open(tmp_dir.joinpath('vocab_frq.txt'), 'w') as f:
+        for word, frq in vocab_sorted:
+            line = f"{word}\t{frq}\n"
+            f.write(line)
