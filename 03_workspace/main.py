@@ -38,19 +38,15 @@ In this section the required data is downloaded and preprocessed (f.E. unzipped)
 The module data_wrangler will be used for this.
 """
 
-number_of_threads = 16
+number_of_threads = 24
 data_url = "http://archives.textfiles.com/[name].zip"
-data_names = ["100"]
-"""
-data_names_exclude = ["fidonet-on-the-internet"]
-
-# to use the full list: 
 data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
               "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups",
               "hacking", "hamradio", "history", "holiday", "humor", "internet", "law", "magazines", "media", "messages",
               "music", "news", "occult", "phreak", "piracy", "politics", "programming", "reports", "rpg", "science",
               "sex", "sf", "stories", "survival", "tap", "ufo", "uploads", "virus"]  # the categories to download
-"""
+data_names_exclude = ["fidonet-on-the-internet"] # categories that are excluded and removed from data_names
+file_filter = "^.*(\.(jpe?g|png|gif|bmp|zip|mp3|wav))|index\.html?$" # use this to exlude by filenames
 data_dir = Path(project_path / "02_datasets/")
 tmp_dir = Path(project_path / ".tmp/")
 
@@ -80,7 +76,7 @@ dataset = {}
 
 # prepare the threads
 for names in helpers.chunker_list(data_names, number_of_threads):
-    threads.append(wrangler.cleaner(data_dir, names))
+    threads.append(wrangler.cleaner(data_dir, names, file_filter))
 
 # start all threads
 for thread in threads:

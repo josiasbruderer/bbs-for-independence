@@ -2,7 +2,7 @@
 title: "Textfiles.com Analysis"
 output:
   html_document:
-    df_print: paged
+    df_print: kable
 editor_options:
   chunk_output_type: console
 ---
@@ -14,7 +14,6 @@ if (!require("DT")) install.packages('DT')
 if (!require("ggplot2")) install.packages('ggplot2')
 if (!require("tidyverse")) install.packages('tidyverse')
 if (!require("hrbrthemes")) install.packages('hrbrthemes')
-if (!require("viridis")) install.packages('viridis')
 if (!require("dplyr")) install.packages('dplyr')
 
 # Load stuff we need later
@@ -23,7 +22,6 @@ library(DT)
 library(ggplot2)
 library(tidyverse)
 library(hrbrthemes)
-library(viridis)
 library(dplyr)
 
 # and set the working directory
@@ -35,21 +33,28 @@ setwd("~/projects/bbs-for-independence/03_workspace")
 ```{r}
 # Read dataset summary from csv
 dataset <- read_csv("../.tmp/dataset.csv", show_col_types = FALSE)
+dataset$charratioDelta = dataset$charratioB - dataset$charratioA
 ```
 
 # Prepare Data
 
 ```{r}
 # Check the average of length, length_raw, avgcolumnsize, charratioA and charratioB
-groups = aggregate(dataset[, 3:7], list(dataset$category), FUN = function(x) mean(suppressWarnings(as.numeric(as.character(x))), na.rm=TRUE))
+groups = aggregate(dataset[, c(4,5,6,7,8,13)], list(dataset$category), FUN = function(x) round(mean(suppressWarnings(as.numeric(as.character(x))), na.rm=TRUE), digits = 2))
 
-datatable(groups)
+cat("Anzahl Dateien: ", nrow(dataset))
+cat("Anzahl Kategorien: ", nrow(groups))
+
+groups %>% arrange(desc(charratioB))
 ```
+
+\newpage
 
 # Plots
  
-```{r, fig.width=8, fig.height=12}
-# create plot: charratioA
+## Verhältnis Text (exkl. Satz- und Leerzeichen) zu Sonderzeichen
+
+```{r, fig.width=8, fig.height=10}
 dataset %>%
   ggplot( aes(x=reorder(category, charratioA, FUN = median), 
               y=charratioA, group=category)) +
@@ -59,38 +64,49 @@ dataset %>%
       plot.title = element_text(size=11)
     ) +
     geom_jitter(color="black", size=0.4, alpha=0.05) +
-    coord_flip() +
+    stat_summary(fun.y=mean, geom="point", shape=4, size=2, color="red", fill="red") +
+    coord_flip() + 
+    ylim(0, 1) +
     xlab("Kategorie") +
-    ylab("Verhältnis Text (exkl. Satz- und Leerzeichen)/Sonderzeichen")
+    ylab("Verhältnis")
+```
 
+## Verhältnis Text (inkl. Satz- und Leerzeichen) zu Sonderzeichen
+
+```{r, fig.width=8, fig.height=10}
 # create plot: charratioB
 dataset %>%
   ggplot( aes(x=reorder(category, charratioB, FUN = median), 
-              y=charratioA, group=category)) +
+              y=charratioB, group=category)) +
     geom_boxplot() +
     theme(
       legend.position="none",
       plot.title = element_text(size=11)
     ) +
     geom_jitter(color="black", size=0.4, alpha=0.05) +
-    coord_flip() +
+    stat_summary(fun.y=mean, geom="point", shape=4, size=2, color="red", fill="red") +
+    coord_flip() + 
+    ylim(0, 1) +
     xlab("Kategorie") +
-    ylab("Verhältnis Text (inkl. Satz- und Leerzeichen)/Sonderzeichen")
+    ylab("Verhältnis")
+```
 
+## Differenz beiden Verhältnissen (inkl. minus exkl. Satz- und Leerzeichen zu Sonderzeichen)
 
-# create plot: charratioA - charratioB
+```{r, fig.width=8, fig.height=10}
 dataset %>%
   ggplot( aes(x=reorder(category, charratioA-charratioB, FUN = median), 
-              y=charratioA-charratioB, group=category)) +
+              y=charratioB-charratioA, group=category)) +
     geom_boxplot() +
     theme(
       legend.position="none",
       plot.title = element_text(size=11)
     ) +
     geom_jitter(color="black", size=0.4, alpha=0.05) +
-    coord_flip() +
+    stat_summary(fun.y=mean, geom="point", shape=4, size=2, color="red", fill="red") +
+    coord_flip() + 
+    ylim(0, 1) +
     xlab("Kategorie") +
     ylab("Differenz beiden Verhältnissen")
-
 ```
 

@@ -52,10 +52,11 @@ def daterange(lst, t="r"):
 
 class cleaner(Thread):
 
-    def __init__(self, data_dir, data_names):
+    def __init__(self, data_dir, data_names, file_filter):
         Thread.__init__(self)
         self.data_dir = data_dir
         self.data_names = data_names
+        self.file_filter = file_filter
         self.data = {}
 
     def run(self):
@@ -73,6 +74,10 @@ class cleaner(Thread):
         for fname in dir_texts.glob('**/*'):  # ** = all subdirectories
             if Path(fname).is_file():
                 print("processing in " + str(dir_texts.stem) + " file: " + str(fname))
+
+                if re.match(self.file_filter, fname.name):
+                    print("skip in " + str(dir_texts.stem) + " because of file_filter: " + str(fname))
+                    continue
                 # Read file content and replace encoding erros
                 content_raw = codecs.open(fname, 'r', encoding='utf-8', errors='replace').read()
 
