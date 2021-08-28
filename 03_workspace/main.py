@@ -39,16 +39,13 @@ The module data_wrangler will be used for this.
 """
 
 number_of_threads = 24
-skip_steps = ["download", "cleaning"]
+skip_steps = ["download", "cleaning", "netadata-filtering"]
 data_url = "http://archives.textfiles.com/[name].zip"
-data_names = ["100"]
-"""
-    , "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
+data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
               "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups", "hacking", "hamradio",
               "history", "holiday", "humor", "internet", "law", "magazines", "media", "messages", "music", "news",
               "occult", "phreak", "piracy", "politics", "programming", "reports", "rpg", "science", "sex", "sf",
               "stories", "survival", "tap", "ufo", "uploads", "virus", "fidonet-on-the-internet"]  # categories to download
-"""
 data_names_exclude = ["fidonet-on-the-internet", "tap", "floppies", "exhibits", "artifacts",
                       "piracy", "art"] # categories that are excluded and removed from data_names
 file_filter = "^.*(\.(jpe?g|png|gif|bmp|zip|mp3|wav))|index\.html?$" # use this to exlude by filenames
@@ -130,7 +127,7 @@ if "cleaning" not in skip_steps:
 
     print("data cleaned successfully")
 else:
-    # load dataset.pkl because it was not generate during runtime
+    # load dataset_full.pkl because it was not generate during runtime
     dataset = helpers.load_object(tmp_dir.joinpath("dataset_full.pkl"))
     print("data loaded from dataset_full.pkl")
 
@@ -148,7 +145,7 @@ if "netadata-filtering" not in skip_steps:
 
     helpers.save_object(dataset, tmp_dir.joinpath("dataset_filtered.pkl"))
 else:
-    # load dataset.pkl because it was not generate during runtime
+    # load dataset_filtered.pkl because it was not generate during runtime
     dataset = helpers.load_object(tmp_dir.joinpath("dataset_filtered.pkl"))
     print("data loaded from dataset_filtered.pkl")
 
