@@ -54,12 +54,16 @@ The module data_wrangler will be used for this.
 """
 
 number_of_threads = 24
+
+"""
+skip_steps = [] # skip nothing
 skip_steps = ["download", "cleaning"] # use this after modification on metadata_file_filter
-#skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
-#              "analysis_scattertext", "analysis_year", "analysis_octis"] # the full list
-#skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq",
-#              "analysis_scattertext", "analysis_year", "analysis_advance_preparation"]
-#skip_steps = [] # skip nothing
+skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
+              "analysis_scattertext", "analysis_year", "analysis_octis"] # the full list
+"""
+skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
+              "analysis_scattertext", "analysis_year"] # the full list
+
 data_url = "http://archives.textfiles.com/[name].zip"
 data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
               "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups", "hacking", "hamradio",
@@ -347,10 +351,12 @@ if "analysis_year" not in skip_steps:
     try:
         dummy = pd.DataFrame(years.from_1960_to_1999)
 
-        e = dummy.append(docs_per_year[docs_per_year['type'] == "eyear"][["year", "count"]]).groupby('year').agg(
-            {'count': "sum"})
-        l = dummy.append(docs_per_year[docs_per_year['type'] == "lyear"][["year", "count"]]).groupby('year').agg(
-            {'count': "sum"})
+        e = dummy.append(docs_per_year[(docs_per_year['type'] == "eyear") &
+                                       (docs_per_year['year'] >= 1960)][["year", "count"]])\
+            .groupby('year').agg({'count': "sum"})
+        l = dummy.append(docs_per_year[(docs_per_year['type'] == "lyear") &
+                                       (docs_per_year['year'] >= 1960)][["year", "count"]])\
+            .groupby('year').agg({'count': "sum"})
 
         print("r_{eyear mit lyear} = ", np.corrcoef(e["count"], l["count"])[0, 1])
     except Exception as e:
