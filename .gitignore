@@ -5,6 +5,8 @@
 # datasets
 02_datasets/*
 !02_datasets/note.txt
+!02_datasets/declaration
+!02_datasets/declaration/declarationbarlow1996.txt
 
 # pyCharm IDE and virtual environment
 .idea

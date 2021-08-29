@@ -23,4 +23,7 @@ bundle exec jekyll serve
 #start junyper lab
 cd 03_workspace
 ./start-jupyter.sh
+
+#install requirements
+sudo pip install -r requirements.txt
 ```
