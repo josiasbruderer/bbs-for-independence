@@ -26,4 +26,7 @@ cd 03_workspace
 
 #install requirements
 sudo pip install -r requirements.txt
+
+#run main script
+python3 ./03_workspace/main.py
 ```
