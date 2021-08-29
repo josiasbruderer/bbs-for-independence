@@ -65,7 +65,12 @@ skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysi
 skip_steps = [] # the full list
 
 data_url = "http://archives.textfiles.com/[name].zip"
-data_names = ["100"]  # categories to download
+data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
+              "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups", "hacking", "hamradio",
+              "history", "holiday", "humor", "internet", "law", "magazines", "media", "messages", "music", "news",
+              "occult", "phreak", "piracy", "politics", "programming", "reports", "rpg", "science", "sex", "sf",
+              "stories", "survival", "tap", "ufo", "uploads", "virus",
+              "fidonet-on-the-internet"]  # categories to download
 data_names_exclude = ["fidonet-on-the-internet", "tap", "floppies", "exhibits", "artifacts",
                       "piracy", "art", "magazines", "digest"]  # categories that are excluded and removed from data_names
 file_filter = "^.*(\.(jpe?g|png|gif|bmp|zip|mp3|wav))|index\.html?$"  # use this to exclude by filenames
@@ -209,10 +214,10 @@ if "modeling" not in skip_steps:
 
     shutil.copyfile(tmp_dir.joinpath("corpus.bin.gz"),
                     models_dir.joinpath("corpus.bin.gz")) # copy dataset_filtered.pkl to models
-else:
-    # load corpus.bin.gz because it was not generate during runtime
-    corpus = textacy.Corpus.load("en_core_web_sm", tmp_dir.joinpath("corpus.bin.gz"))
-    print("data loaded from corpus.bin.gz")
+
+# load corpus.bin.gz always because freq cannot handle vanilla corpus
+corpus = textacy.Corpus.load("en_core_web_sm", tmp_dir.joinpath("corpus.bin.gz"))
+print("data loaded from corpus.bin.gz")
 
 if "analysis_freq" not in skip_steps:
     print("start wordcount")
