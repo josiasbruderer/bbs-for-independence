@@ -8,6 +8,14 @@
 !02_datasets/declaration
 !02_datasets/declaration/declarationbarlow1996.txt
 
+# models
+03_workspace/models/*
+!03_workspace/models/note.txt
+
+# analysis
+03_workspace/analysis/*
+!03_workspace/analysis/note.txt
+
 # pyCharm IDE and virtual environment
 .idea
 .envs

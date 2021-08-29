@@ -34,7 +34,7 @@ setwd("~/projects/bbs-for-independence/03_workspace")
 
 ```{r warning=FALSE}
 # Read dataset summary from csv
-dataset <- read_csv("../.tmp/dataset.csv", show_col_types = FALSE)
+dataset <- read_csv("./models/dataset.csv", show_col_types = FALSE)
 dataset$charratioDelta = dataset$charratioB - dataset$charratioA
 ```
 
@@ -50,8 +50,9 @@ df = aggregate(x = dataset[, c(4,5,6,7,8,13)],
 df <- do.call(data.frame, df) # bind columns which contain matrices back into the data frame
 df <- as.data.frame(lapply(df, unlist)) # convert lists back to vectors
 
-f_selection <- dataset %>% filter(!category %in% c("tap", "floppies", "exhibits", "artifacts", 
-                                          "piracy", "art", "magazines", "digest"))
+f_selection <- dataset %>% filter(!category %in% c("fidonet-on-the-internet", "tap", "floppies", 
+                                                   "exhibits", "artifacts", "piracy", "art", 
+                                                   "magazines", "digest"))
 f_magazins <- dataset %>% filter(category == "magazines")
 f_digest <- dataset %>% filter(category == "digest")
 
@@ -161,5 +162,41 @@ dataset %>%
     ylim(0, 1) +
     xlab("Kategorie") +
     ylab("Differenz beiden Verhältnissen")
+```
+
+\newpage
+
+# Apply filtering and extend filtering
+
+```{r}
+
+data_names_exclude <- c("fidonet-on-the-internet","tap","floppies","exhibits",
+                        "artifacts","piracy", "art", "magazines", "digest")
+
+dataset_filtered = dataset %>%
+  filter(!category %in% data_names_exclude) %>%
+  filter(charratioB > 0.95)
+
+fun_length_selection_lt <- Vectorize( function(x) { nrow(dataset_filtered %>% filter(length < x)) } )
+fun_length_selection_gt <- Vectorize( function(x) { nrow(dataset_filtered %>% filter(length > x)) } )
+
+length_fun_seq = seq(min(dataset_filtered$length),max(dataset_filtered$length),1000)
+length_fun <- data.frame(x = length_fun_seq,
+                       n = c(fun_length_selection_lt(length_fun_seq),
+                             fun_length_selection_gt(length_fun_seq)),
+                       categories = rep(c("greater than", "less than"), each = length(length_fun_seq)))
+
+ggplot(length_fun, aes(x, n, col = categories)) +
+  geom_line() + 
+  scale_x_continuous(trans = log10_trans()) +
+  ggtitle("n files if length < or > x on a log10 scale")
+
+dataset_filtered_2 = dataset %>%
+  filter(!category %in% data_names_exclude) %>%
+  filter(charratioB > 0.95) %>%
+  filter(length > 1000) %>%
+  filter(length < 10000)
+
+cat("Anzahl Dateien mit gefilterter Länge: ", nrow(dataset_filtered_2))
 ```
 

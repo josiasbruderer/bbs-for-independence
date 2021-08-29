@@ -15,7 +15,7 @@ The following lines of code is used for preparing our environment.
 """
 
 # load the necessary libraries
-
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -47,11 +47,11 @@ The module data_wrangler will be used for this.
 """
 
 number_of_threads = 24
-#skip_steps = ["download", "cleaning"] # use this after modification on metadata_file_filter
+skip_steps = ["download", "cleaning"] # use this after modification on metadata_file_filter
 #skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
 #              "analysis_scattertext", "analysis_year"] # the full list
 #skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_scattertext"]
-skip_steps = [] # skip nothing
+#skip_steps = [] # skip nothing
 data_url = "http://archives.textfiles.com/[name].zip"
 data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
               "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups", "hacking", "hamradio",
@@ -60,13 +60,16 @@ data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs",
               "stories", "survival", "tap", "ufo", "uploads", "virus",
               "fidonet-on-the-internet"]  # categories to download
 data_names_exclude = ["fidonet-on-the-internet", "tap", "floppies", "exhibits", "artifacts",
-                      "piracy", "art"]  # categories that are excluded and removed from data_names
+                      "piracy", "art", "magazines", "digest"]  # categories that are excluded and removed from data_names
 file_filter = "^.*(\.(jpe?g|png|gif|bmp|zip|mp3|wav))|index\.html?$"  # use this to exclude by filenames
-metadata_file_filter = "x['metadata']['charratioB'] > 0.95"  #
+metadata_file_filter = "(x['metadata']['charratioB'] > 0.95) & (x['metadata']['length'] > 1000) & (x['metadata']['length'] < 10000)"
 data_dir = Path(project_path / "02_datasets/")
+models_dir = Path(project_path / "03_workspace/models/")
+analysis_dir = Path(project_path / "03_workspace/analysis/")
 tmp_dir = Path(project_path / ".tmp/")
 
 data_dir.mkdir(parents=True, exist_ok=True)
+models_dir.mkdir(parents=True, exist_ok=True)
 tmp_dir.mkdir(parents=True, exist_ok=True)
 
 threads = []
@@ -144,6 +147,9 @@ if "cleaning" not in skip_steps:
                     str(item["metadata"]["type"]) + "\"\r\n")
     f.close()
 
+    shutil.copyfile(tmp_dir.joinpath("dataset.csv"),
+                    models_dir.joinpath("dataset.csv")) # copy dataset.csv to models
+
     print("data cleaned successfully")
 elif "metadata-filtering" not in skip_steps:
     # load dataset_full.pkl because it was not generate during runtime
@@ -163,6 +169,8 @@ if "metadata-filtering" not in skip_steps:
         dataset[key] = d_tmp
 
     helpers.save_object(dataset, tmp_dir.joinpath("dataset_filtered.pkl"))
+    shutil.copyfile(tmp_dir.joinpath("dataset_filtered.pkl"),
+                    models_dir.joinpath("dataset_filtered.pkl")) # copy dataset_filtered.pkl to models
 elif "modeling" not in skip_steps:
     # load dataset_filtered.pkl because it was not generate during runtime
     dataset = helpers.load_object(tmp_dir.joinpath("dataset_filtered.pkl"))
@@ -190,6 +198,9 @@ if "modeling" not in skip_steps:
             corpus.save(tmp_dir.joinpath("corpus.bin.gz"))
     print("end building corpus")
     print("Time elapsed: ", time.time() - t0, "s")  # CPU seconds elapsed (floating point)
+
+    shutil.copyfile(tmp_dir.joinpath("corpus.bin.gz"),
+                    models_dir.joinpath("corpus.bin.gz")) # copy dataset_filtered.pkl to models
 else:
     # load corpus.bin.gz because it was not generate during runtime
     corpus = textacy.Corpus.load("en_core_web_sm", tmp_dir.joinpath("corpus.bin.gz"))
@@ -210,6 +221,9 @@ if "analysis_freq" not in skip_steps:
             f.write(line)
     print("end wordcount")
 
+    shutil.copyfile(tmp_dir.joinpath("vocab_frq.txt"),
+                    analysis_dir.joinpath("vocab_frq.txt")) # copy dataset_filtered.pkl to analysis
+
 if "analysis_advance_preparation" not in skip_steps:
     print("start advance preparation")
     # merge metadata and actual content for each document in the corpus
@@ -227,6 +241,11 @@ if "analysis_advance_preparation" not in skip_steps:
     helpers.save_object(df, tmp_dir.joinpath("df.pkl"))
     helpers.save_object(df_sub, tmp_dir.joinpath("df_sub.pkl"))
     print("end advance preparation")
+
+    shutil.copyfile(tmp_dir.joinpath("df.pkl"),
+                    models_dir.joinpath("df.pkl")) # copy df.pkl to models
+    shutil.copyfile(tmp_dir.joinpath("df_sub.pkl"),
+                    models_dir.joinpath("df_sub.pkl")) # copy df_sub.pkl to models
 else:
     # load df.pkl and df_sub.pkl because it was not generate during runtime
     df = helpers.load_object(tmp_dir.joinpath("df.pkl"))
@@ -269,6 +288,8 @@ if "analysis_scattertext" not in skip_steps:
     fname = tmp_dir.joinpath("viz_declaration_textfiles.html")
     open(fname, 'wb').write(html.encode('utf-8'))
     print("end scattertext")
+    shutil.copyfile(tmp_dir.joinpath("viz_declaration_textfiles.html"),
+                    analysis_dir.joinpath("viz_declaration_textfiles.html")) # copy viz_declaration_textfiles.html to analysis
 
 if "analysis_year" not in skip_steps:
     print("start year")
@@ -320,5 +341,7 @@ if "analysis_year" not in skip_steps:
 
     print("r_{eyear mit lyear} = ", np.corrcoef(e["count"], l["count"])[0, 1])
     print("end year")
+    shutil.copyfile(tmp_dir.joinpath("docs_per_year.png"),
+                    analysis_dir.joinpath("docs_per_year.png")) # copy docs_per_year.png to analysis
 
 print("everything done.")
