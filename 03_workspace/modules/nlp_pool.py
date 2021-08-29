@@ -16,7 +16,7 @@ import spacy
 class PoolCorpus(object):
 
     def __init__(self):
-        model = spacy.load('en_core_web_sm')
+        model = spacy.load('en_core_web_sm', disable=["parser"])
         model.max_length = 10000000  # enable utilization of ~ 100GB RAM
         self.corpus = textacy.corpus.Corpus(lang=model)
         self.totalFilesTarget = 1
@@ -26,7 +26,7 @@ class PoolCorpus(object):
         self.corpus.add(data)
         self.processedFiles = self.processedFiles + 1
         print("Processed ", self.processedFiles, " of ", self.totalFilesTarget, "files: ",
-              (100/self.totalFilesTarget*self.processedFiles), "%")
+              round(100/self.totalFilesTarget*self.processedFiles, 4), "%")
 
     def get(self):
         return self.corpus
