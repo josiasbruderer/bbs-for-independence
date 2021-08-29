@@ -30,10 +30,11 @@ from multiprocessing import Pool
 from multiprocessing.managers import BaseManager
 import string
 from octis.preprocessing.preprocessing import Preprocessing
-from octis.dataset.dataset import Dataset
-from octis.evaluation_metrics.diversity_metrics import TopicDiversity
-from octis.models.LDA import LDA
-from wordcloud import WordCloud
+# from octis.dataset.dataset import Dataset
+# from octis.evaluation_metrics.diversity_metrics import TopicDiversity
+# from octis.models.LDA import LDA
+# from wordcloud import WordCloud
+import csv
 
 project_path = Path.cwd()
 
@@ -61,20 +62,14 @@ skip_steps = ["download", "cleaning"] # use this after modification on metadata_
 skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
               "analysis_scattertext", "analysis_year", "analysis_octis"] # the full list
 """
-skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
-              "analysis_scattertext", "analysis_year"] # the full list
+skip_steps = [] # the full list
 
 data_url = "http://archives.textfiles.com/[name].zip"
-data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
-              "drugs", "etext", "exhibits", "floppies", "food", "fun", "games", "groups", "hacking", "hamradio",
-              "history", "holiday", "humor", "internet", "law", "magazines", "media", "messages", "music", "news",
-              "occult", "phreak", "piracy", "politics", "programming", "reports", "rpg", "science", "sex", "sf",
-              "stories", "survival", "tap", "ufo", "uploads", "virus",
-              "fidonet-on-the-internet"]  # categories to download
+data_names = ["100"]  # categories to download
 data_names_exclude = ["fidonet-on-the-internet", "tap", "floppies", "exhibits", "artifacts",
                       "piracy", "art", "magazines", "digest"]  # categories that are excluded and removed from data_names
 file_filter = "^.*(\.(jpe?g|png|gif|bmp|zip|mp3|wav))|index\.html?$"  # use this to exclude by filenames
-metadata_file_filter = "(x['metadata']['charratioB'] > 0.95) & (x['metadata']['length'] > 1000) & (x['metadata']['length'] < 10000)"
+metadata_file_filter = "(x['metadata']['charratioB'] > 0.95) & (x['metadata']['length'] > 300) & (x['metadata']['length'] < 30000)"
 data_dir = Path(project_path / "02_datasets/")
 models_dir = Path(project_path / "03_workspace/models/")
 analysis_dir = Path(project_path / "03_workspace/analysis/")
@@ -223,19 +218,63 @@ if "analysis_freq" not in skip_steps:
     print("start wordcount")
     # get lowercased and filtered corpus vocabulary (R3.3.1)
     vocab = corpus.word_counts(by='lemma_', filter_stops=True, filter_punct=True, filter_nums=True)
+    vocab_doc = corpus.word_doc_counts(by='lemma_', filter_stops=True, filter_punct=True, filter_nums=True)
 
     # sort vocabulary by descending frequency
     vocab_sorted = sorted(vocab.items(), key=lambda x: x[1], reverse=True)
+    vocab_sorted_doc = sorted(vocab_doc.items(), key=lambda x: x[1], reverse=True)
 
     # write to file, one word and its frequency per line
     with open(tmp_dir.joinpath('vocab_frq.txt'), 'w') as f:
         for word, frq in vocab_sorted:
             line = f"{word}\t{frq}\n"
             f.write(line)
-    print("end wordcount")
+    with open(tmp_dir.joinpath('vocab_frq_doc.txt'), 'w') as f:
+        for word, frq in vocab_sorted_doc:
+            line = f"{word}\t{frq}\n"
+            f.write(line)
 
     shutil.copyfile(tmp_dir.joinpath("vocab_frq.txt"),
                     analysis_dir.joinpath("vocab_frq.txt")) # copy dataset_filtered.pkl to analysis
+    shutil.copyfile(tmp_dir.joinpath("vocab_frq_doc.txt"),
+                    analysis_dir.joinpath("vocab_frq_doc.txt"))  # copy dataset_filtered.pkl to analysis
+
+    en = textacy.load_spacy_lang("en_core_web_sm")
+    stats = []
+    for cat in data_names + ["declaration"]:
+        ctmp = corpus.get(lambda doc: doc._.meta["category"] == cat)
+        dtmp = list(ctmp)
+        ndocs = len(dtmp)
+        nvocab = 0
+        nlength = 0
+        for d in dtmp:
+            nvocab = nvocab + d.vocab.length
+            nlength = nlength + d._.meta["length"]
+        stats.append({"category": cat, "ndocs":  ndocs, "nvocab": nvocab, "nlength": nlength})
+        if ndocs > 0:
+            tmpcorpus = textacy.corpus.Corpus(en, data=dtmp)
+            tmpvocab = tmpcorpus.word_counts(by='lemma_', filter_stops=True, filter_punct=True, filter_nums=True)
+            tmpvocab_doc = tmpcorpus.word_doc_counts(by='lemma_', filter_stops=True, filter_punct=True, filter_nums=True)
+            tmpvocab_sorted = sorted(tmpvocab.items(), key=lambda x: x[1], reverse=True)
+            tmpvocab_sorted_doc = sorted(tmpvocab_doc.items(), key=lambda x: x[1], reverse=True)
+            with open(tmp_dir.joinpath('vocab_frq_' + cat + '.txt'), 'w') as f:
+                for word, frq in tmpvocab_sorted:
+                    line = f"{word}\t{frq}\n"
+                    f.write(line)
+            with open(tmp_dir.joinpath('vocab_frq_doc_' + cat + '.txt'), 'w') as f:
+                for word, frq in tmpvocab_sorted_doc:
+                    line = f"{word}\t{frq}\n"
+                    f.write(line)
+            shutil.copyfile(tmp_dir.joinpath('vocab_frq_' + cat + '.txt'),
+                            analysis_dir.joinpath('vocab_frq_' + cat + '.txt'))  # copy dataset_filtered.pkl to analysis
+            shutil.copyfile(tmp_dir.joinpath('vocab_frq_doc_' + cat + '.txt'),
+                            analysis_dir.joinpath('vocab_frq_doc_' + cat + '.txt'))  # copy dataset_filtered.pkl to analysis
+    with open(tmp_dir.joinpath('stats.csv'), 'w') as csv_file:
+        writer = csv.DictWriter(csv_file, stats[0].keys())
+        writer.writeheader()
+        writer.writerows(stats)
+
+    print("end wordcount")
 
 if "analysis_advance_preparation" not in skip_steps:
     print("start advance preparation")
@@ -322,7 +361,7 @@ if "analysis_year" not in skip_steps:
     dtmp.insert(2, "type", "lyear")
     docs_per_year = docs_per_year.append(dtmp, ignore_index=True)
 
-    # manual year waas only available in top100 analysis
+    # manual year was only available in top100 analysis
     # dtmp = pd.read_csv('top100_years.txt', delimiter=",").groupby('myear').agg({'text': "count"}).reset_index().rename(
     #    columns={'text': 'count'})
     # dtmp = dtmp.rename(columns={"myear": "year"})
@@ -388,25 +427,27 @@ if "analysis_octis" not in skip_steps:
         shutil.rmtree(models_dir.joinpath('octis_dataset'))
 
     shutil.copytree(tmp_dir.joinpath('octis_dataset'),
-                    octis_dataset_dir.joinpath('octis_dataset'))  # copy viz_declaration_textfiles.html to analysis
+                    octis_dataset_dir.joinpath('octis_dataset'))  # copy octis_dataset to datasets
     shutil.copytree(tmp_dir.joinpath('octis_dataset'),
-                    models_dir.joinpath('octis_dataset'))  # copy viz_declaration_textfiles.html to analysis
+                    models_dir.joinpath('octis_dataset'))  # copy octis_dataset to models
 
-    model = LDA(num_topics=5)  # Create model
-    model_output = model.train_model(octis_dataset)  # Train the model
+    # octis will be processed using dashboard
+    # model = LDA(num_topics=5)  # Create model
+    # model_output = model.train_model(octis_dataset)  # Train the model
 
-    metric = TopicDiversity(topk=10)  # Initialize metric
-    topic_diversity_score = metric.score(model_output)  # Compute score of the metric
+    # metric = TopicDiversity(topk=10)  # Initialize metric
+    # topic_diversity_score = metric.score(model_output)  # Compute score of the metric
 
-    print("topic diversity score:", topic_diversity_score)
+    # print("topic diversity score:", topic_diversity_score)
 
-    wocl = WordCloud(mode="RGBA", background_color="white").generate(" ".join(model_output["topics"][0]))
-    wocl2 = WordCloud(mode="RGBA", background_color="white", relative_scaling=1, scale=10, max_words=9999,
-                     min_font_size=1, max_font_size=18, collocations=False).generate(" ".join(model_output["topics"][0]))
-    image = wocl.to_image()
-    image.save(tmp_dir.joinpath("wordcloud.png"))
-    image2 = wocl2.to_image()
-    image2.save(tmp_dir.joinpath("wordcloud2.png"))
+    # wordcloud will be generated outside of python
+    # wocl = WordCloud(mode="RGBA", background_color="white").generate(" ".join(model_output["topics"][0]))
+    # wocl2 = WordCloud(mode="RGBA", background_color="white", relative_scaling=1, scale=10, max_words=9999,
+    #                  min_font_size=1, max_font_size=18, collocations=False).generate(" ".join(model_output["topics"][0]))
+    # image = wocl.to_image()
+    # image.save(tmp_dir.joinpath("wordcloud.png"))
+    # image2 = wocl2.to_image()
+    # image2.save(tmp_dir.joinpath("wordcloud2.png"))
 
     print("end octis")
 
