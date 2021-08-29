@@ -66,6 +66,9 @@ metadata_file_filter = "x['metadata']['charratioB'] > 0.95"  #
 data_dir = Path(project_path / "02_datasets/")
 tmp_dir = Path(project_path / ".tmp/")
 
+data_dir.mkdir(parents=True, exist_ok=True)
+tmp_dir.mkdir(parents=True, exist_ok=True)
+
 threads = []
 
 if "download" not in skip_steps:
