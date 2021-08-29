@@ -61,9 +61,9 @@ class cleaner(Thread):
 
     def run(self):
         for data_name in self.data_names:
-            self.data[data_name] = self.get_texts(Path(self.data_dir, data_name))
+            self.data[data_name] = self.get_texts(Path(self.data_dir, data_name), data_name)
 
-    def get_texts(self, dir_texts):
+    def get_texts(self, dir_texts, data_name):
         """
         Sequentially stream all documents from a given folder,
         including metadata.
@@ -118,7 +118,8 @@ class cleaner(Thread):
                             'year': daterange(matches),
                             'eyear': daterange(matches, "e"),
                             'lyear': daterange(matches, "l"),
-                            'type': typ
+                            'type': typ,
+                            'category': data_name,
                             }
 
                 # return documents one after another (sequentially)

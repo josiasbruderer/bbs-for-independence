@@ -194,8 +194,8 @@ ggplot(length_fun, aes(x, n, col = categories)) +
 dataset_filtered_2 = dataset %>%
   filter(!category %in% data_names_exclude) %>%
   filter(charratioB > 0.95) %>%
-  filter(length > 1000) %>%
-  filter(length < 10000)
+  filter(length > 300) %>%
+  filter(length < 30000)
 
 cat("Anzahl Dateien mit gefilterter Länge: ", nrow(dataset_filtered_2))
 ```
