@@ -30,4 +30,12 @@ sudo pip install -r requirements.txt
 #run main script
 # run before first time: python3 -m spacy download en_core_web_sm
 python3 ./03_workspace/main.py
+
+#use OCTIS dashboard
+cd 03_workspace
+git clone https://github.com/MIND-Lab/OCTIS.git
+cd OCTIS
+pip install octis
+python octis/dashboard/server.py
+
 ```

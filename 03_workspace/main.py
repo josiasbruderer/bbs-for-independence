@@ -15,6 +15,7 @@ The following lines of code is used for preparing our environment.
 """
 
 # load the necessary libraries
+import os
 import shutil
 import sys
 import time
@@ -27,6 +28,12 @@ from plotnine import *
 import numpy as np
 from multiprocessing import Pool
 from multiprocessing.managers import BaseManager
+import string
+from octis.preprocessing.preprocessing import Preprocessing
+from octis.dataset.dataset import Dataset
+from octis.evaluation_metrics.diversity_metrics import TopicDiversity
+from octis.models.LDA import LDA
+from wordcloud import WordCloud
 
 project_path = Path.cwd()
 
@@ -49,8 +56,9 @@ The module data_wrangler will be used for this.
 number_of_threads = 24
 skip_steps = ["download", "cleaning"] # use this after modification on metadata_file_filter
 #skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
-#              "analysis_scattertext", "analysis_year"] # the full list
-#skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_scattertext"]
+#              "analysis_scattertext", "analysis_year", "analysis_octis"] # the full list
+#skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq",
+#              "analysis_scattertext", "analysis_year", "analysis_advance_preparation"]
 #skip_steps = [] # skip nothing
 data_url = "http://archives.textfiles.com/[name].zip"
 data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs", "computers", "conspiracy", "digest",
@@ -66,6 +74,7 @@ metadata_file_filter = "(x['metadata']['charratioB'] > 0.95) & (x['metadata']['l
 data_dir = Path(project_path / "02_datasets/")
 models_dir = Path(project_path / "03_workspace/models/")
 analysis_dir = Path(project_path / "03_workspace/analysis/")
+octis_dataset_dir = Path(project_path / "03_workspace/OCTIS/preprocessed_datasets/")
 tmp_dir = Path(project_path / ".tmp/")
 
 data_dir.mkdir(parents=True, exist_ok=True)
@@ -332,16 +341,67 @@ if "analysis_year" not in skip_steps:
 
     ggsave(plot=p, filename="docs_per_year", path=tmp_dir)
 
-    dummy = pd.DataFrame(years.from_1960_to_1999)
-
-    e = dummy.append(docs_per_year[docs_per_year['type'] == "eyear"][["year", "count"]]).groupby('year').agg(
-        {'count': "sum"})
-    l = dummy.append(docs_per_year[docs_per_year['type'] == "lyear"][["year", "count"]]).groupby('year').agg(
-        {'count': "sum"})
-
-    print("r_{eyear mit lyear} = ", np.corrcoef(e["count"], l["count"])[0, 1])
-    print("end year")
     shutil.copyfile(tmp_dir.joinpath("docs_per_year.png"),
-                    analysis_dir.joinpath("docs_per_year.png")) # copy docs_per_year.png to analysis
+                    analysis_dir.joinpath("docs_per_year.png"))  # copy docs_per_year.png to analysis
+
+    try:
+        dummy = pd.DataFrame(years.from_1960_to_1999)
+
+        e = dummy.append(docs_per_year[docs_per_year['type'] == "eyear"][["year", "count"]]).groupby('year').agg(
+            {'count': "sum"})
+        l = dummy.append(docs_per_year[docs_per_year['type'] == "lyear"][["year", "count"]]).groupby('year').agg(
+            {'count': "sum"})
+
+        print("r_{eyear mit lyear} = ", np.corrcoef(e["count"], l["count"])[0, 1])
+    except Exception as e:
+        print("something went wrong while calculating eyear / lyear variaty.")
+        pass
+
+    print("end year")
+
+if "analysis_octis" not in skip_steps:
+    print("start octis")
+
+    df_sub.to_csv(tmp_dir.joinpath("corpus.txt"), "\t", columns = ["text"])
+
+    # Initialize preprocessing
+    preprocessor = Preprocessing(vocabulary=None, max_features=None,
+                                      remove_punctuation=True, punctuation=string.punctuation,
+                                      lemmatize=True, stopword_list='english',
+                                      min_chars=1, min_words_docs=0)
+
+    # preprocess
+    octis_dataset = preprocessor.preprocess_dataset(documents_path=tmp_dir.joinpath("corpus.txt"))
+
+    # save the preprocessed dataset
+    octis_dataset.save(str(tmp_dir.joinpath('octis_dataset')))
+
+    if os.path.exists(octis_dataset_dir.joinpath('octis_dataset')):
+        shutil.rmtree(octis_dataset_dir.joinpath('octis_dataset'))
+    if os.path.exists(models_dir.joinpath('octis_dataset')):
+        shutil.rmtree(models_dir.joinpath('octis_dataset'))
+
+    shutil.copytree(tmp_dir.joinpath('octis_dataset'),
+                    octis_dataset_dir.joinpath('octis_dataset'))  # copy viz_declaration_textfiles.html to analysis
+    shutil.copytree(tmp_dir.joinpath('octis_dataset'),
+                    models_dir.joinpath('octis_dataset'))  # copy viz_declaration_textfiles.html to analysis
+
+    model = LDA(num_topics=5)  # Create model
+    model_output = model.train_model(octis_dataset)  # Train the model
+
+    metric = TopicDiversity(topk=10)  # Initialize metric
+    topic_diversity_score = metric.score(model_output)  # Compute score of the metric
+
+    print("topic diversity score:", topic_diversity_score)
+
+    wocl = WordCloud(mode="RGBA", background_color="white").generate(" ".join(model_output["topics"][0]))
+    wocl2 = WordCloud(mode="RGBA", background_color="white", relative_scaling=1, scale=10, max_words=9999,
+                     min_font_size=1, max_font_size=18, collocations=False).generate(" ".join(model_output["topics"][0]))
+    image = wocl.to_image()
+    image.save(tmp_dir.joinpath("wordcloud.png"))
+    image2 = wocl2.to_image()
+    image2.save(tmp_dir.joinpath("wordcloud2.png"))
+
+    print("end octis")
 
 print("everything done.")
