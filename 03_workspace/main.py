@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-##########################################################
+####################################################################
 # title:    BBS for Independence - data analysis using NLP
 # subtitle: HSA in the ABC of Computational Text Analysis
 # author:   Josias Bruderer, Universität Luzern
-# date:     25. August 2021
-# desc:
-##########################################################
+# date:     30. August 2021
+# desc:     this script manages the whole analisis of textfiles.com
+####################################################################
 
 # Preparations [R1]
 """
@@ -60,7 +60,7 @@ number_of_threads = 24
 skip_steps = [] # skip nothing
 skip_steps = ["download", "cleaning"] # use this after modification on metadata_file_filter
 skip_steps = ["download", "cleaning", "metadata-filtering", "modeling", "analysis_freq", "analysis_advance_preparation",
-              "analysis_scattertext", "analysis_year", "analysis_octis"] # the full list
+              "analysis_scattertext", "analysis_year", "analysis_octis", "analysis_entities"] # the full list
 """
 skip_steps = [] # the full list
 
@@ -455,5 +455,38 @@ if "analysis_octis" not in skip_steps:
     # image2.save(tmp_dir.joinpath("wordcloud2.png"))
 
     print("end octis")
+
+if "analysis_entities" not in skip_steps:
+    entities = []
+
+    for doc in corpus.docs:
+        for ent in textacy.extract.entities(doc):
+            try:
+                entities += [{"text": ent.text, "label": ent.label_, "explain": spacy.explain(ent.label_)}]
+            except:
+                print("Problem with:", doc._.meta["name"])
+
+    # export corpus as csv
+    f_csv = tmp_dir.joinpath('entities.csv')
+    textacy.io.csv.write_csv(entities, f_csv, fieldnames=entities[0].keys())
+
+    shutil.copyfile(tmp_dir.joinpath('entities.csv'),
+                    analysis_dir.joinpath('entities.csv'))  # copy entities.csv to analysis
+
+    df_entities = pd.DataFrame(entities, columns=['text', 'label', 'explain'])
+    df_entities_count = df_entities.groupby('text').agg({'label': "count"}).rename(
+        columns={'label': 'count'}).sort_values(by=['count'], ascending=False).reset_index()
+
+    # write to file, one word and its frequency per line
+    fname = tmp_dir.joinpath('entities_frq.csv')
+    with open(fname, 'w') as f:
+        for i, d in df_entities_count.iterrows():
+            line = d["text"] + "," + str(d["count"]) + "\n"
+            f.write(line)
+
+    shutil.copyfile(tmp_dir.joinpath('entities_frq.csv'),
+                    analysis_dir.joinpath('entities_frq.csv'))  # copy entities_frq.csv to analysis
+
+    print("entities: \n", df_entities_count[:25])
 
 print("everything done.")
