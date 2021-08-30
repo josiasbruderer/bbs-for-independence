@@ -19,7 +19,6 @@ In a nutshell the recieved data tells to things:
 
 <iframe width="480" height="280" src="https://www.youtube.com/embed/LTJvdGcb7Fs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-
 ## The Power of R
 _Josias, 28.08.2021_
 
