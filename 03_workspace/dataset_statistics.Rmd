@@ -198,5 +198,31 @@ dataset_filtered_2 = dataset %>%
   filter(length < 30000)
 
 cat("Anzahl Dateien mit gefilterter Länge: ", nrow(dataset_filtered_2))
+cat("Gesammt Länge der Dateien mit gefilterter Länge: ", sum(dataset_filtered_2$length), 
+    "≙",round(sum(dataset_filtered_2$length)/1000000),"MB ")
+```
+
+
+```{r}
+## Determine highlighted regions
+v <- rep(0, length(length_fun_seq))
+v[c(round(300/1000):round(30000/1000))] <- 1
+
+## Get the start and end points for highlighted regions
+inds <- diff(c(0, v))
+start <- length_fun$x[inds == 1]
+end <- length_fun$x[inds == -1]
+if (length(start) > length(end)) end <- c(end, tail(length_fun$x, 1))
+
+## highlight region data
+rects <- data.frame(start=start, end=end, group=seq_along(start))
+
+ggplot(length_fun, aes(x, n, col = categories)) +
+  geom_line() + 
+  scale_x_continuous(trans = log10_trans()) +
+  geom_rect(data=rects, inherit.aes=FALSE, aes(xmin=300, xmax=30000, ymin=min(length_fun$n),
+                ymax=max(length_fun$n), group=group), color="black", fill="transparent", alpha=0) +
+  ggtitle("n files if length < or > x on a log10 scale with range")
+
 ```
 

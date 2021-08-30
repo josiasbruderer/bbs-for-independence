@@ -278,6 +278,8 @@ if "analysis_freq" not in skip_steps:
         writer = csv.DictWriter(csv_file, stats[0].keys())
         writer.writeheader()
         writer.writerows(stats)
+    shutil.copyfile(tmp_dir.joinpath('stats.csv'),
+                    analysis_dir.joinpath('stats.csv'))  # copy stats.csv to analysis
 
     print("end wordcount")
 
