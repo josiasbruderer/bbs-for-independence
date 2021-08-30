@@ -12,11 +12,6 @@
 03_workspace/models/*
 !03_workspace/models/note.txt
 
-# states
-03_workspace/states/*/models/dataset_full.pkl
-03_workspace/states/trash
-03_workspace/states/trash/*
-
 # OCTIS
 03_workspace/OCTIS/
 03_workspace/OCTIS/*
