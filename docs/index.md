@@ -1,3 +1,8 @@
+## Endgame
+_Josias, 30.08.2021_
+
+The endgame started - almost everything is ready. The three things that needs to be done is: writing the conclusion, correct typos and attach stuff. There's not much more to say, but more to work. Bye :)  
+
 ## Managed to upload states
 _Josias, 30.08.2021_
 
