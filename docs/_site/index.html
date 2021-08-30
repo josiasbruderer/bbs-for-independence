@@ -4,7 +4,7 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/assets/css/style.css?v=e81a2b07181f2f90eea6bc948fb0c956923698b7">
+    <link rel="stylesheet" href="/assets/css/style.css?v=556f7c0f68eaa0821a2fa17e4e34532248e9f310">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup theme-color. -->
@@ -24,18 +24,18 @@
 <!-- end custom head snippets -->
 
 <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>The Power of R | From BBS to the Declaration of the Independence of Cyberspace</title>
+<title>Managed to upload states | From BBS to the Declaration of the Independence of Cyberspace</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="The Power of R" />
+<meta property="og:title" content="Managed to upload states" />
 <meta name="author" content="Josias Bruderer" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="http://localhost:4000/" />
 <meta property="og:url" content="http://localhost:4000/" />
 <meta property="og:site_name" content="From BBS to the Declaration of the Independence of Cyberspace" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="The Power of R" />
+<meta property="twitter:title" content="Managed to upload states" />
 <script type="application/ld+json">
-{"author":{"@type":"Person","name":"Josias Bruderer"},"url":"http://localhost:4000/","@type":"WebSite","headline":"The Power of R","name":"From BBS to the Declaration of the Independence of Cyberspace","@context":"https://schema.org"}</script>
+{"author":{"@type":"Person","name":"Josias Bruderer"},"url":"http://localhost:4000/","@type":"WebSite","headline":"Managed to upload states","name":"From BBS to the Declaration of the Independence of Cyberspace","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
   </head>
@@ -61,7 +61,28 @@
 
     <div class="container">
       <section id="main_content">
-        <h2 id="the-power-of-r">The Power of R</h2>
+        <h2 id="managed-to-upload-states">Managed to upload states</h2>
+<p><em>Josias, 30.08.2021</em></p>
+
+<p>After some fighting with python code, textfiles - a huge amount of, git-stuff and computational power I managed to find a good set of parameters to shrink the dataset to a selection of files that are possible to analyse. And the results are provided in [03<em>workspace/states](https://github.com/josiasbruderer/bbs-for-independence/tree/main/03_workspace/states){:target</em>“blank”}. One analysis was run on the declaration and some additional files that mirror the spirit of the declaration quite well, the second analysis was run on all selected categories with filtering applied.</p>
+
+<p>In a nutshell the recieved data tells to things:</p>
+
+<p>1. The evolution of bbs mirrors inside the textfiles:</p>
+
+<p><img src="/assets/images/docs_per_year.png" alt="docs per year" /></p>
+
+<p>2. The textfiles are about technology (Octis LDA Topic Model 0):</p>
+
+<p><img src="/assets/images/wc01.png" alt="Wordcloud LDA Topic 0" /></p>
+
+<p>3. The (early) internet is (and was) for porn (Octis LDA Topic Model 6):</p>
+
+<p><img src="/assets/images/wc02.png" alt="Wordcloud LDA Topic 6" /></p>
+
+<iframe width="480" height="280" src="https://www.youtube.com/embed/LTJvdGcb7Fs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<h2 id="the-power-of-r">The Power of R</h2>
 <p><em>Josias, 28.08.2021</em></p>
 
 <p>I faced a new challenge: I was aware already that i will need to implement some way of filtering and I had an rough idea how to do it. The difficult part was to find out the categories and parameter that were suited. I got an anwer using R (of course I could have done it with Python but I knew how to handle data with R, so why not using R this time…). I realized that charratioB will be the best choice, so I checked which categories to filter:</p>
