@@ -36,6 +36,7 @@ cd 03_workspace
 git clone https://github.com/MIND-Lab/OCTIS.git
 cd OCTIS
 pip install octis
+python setup.py
 python octis/dashboard/server.py
 
 ```
