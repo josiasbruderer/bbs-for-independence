@@ -1,3 +1,25 @@
+## Managed to upload states
+_Josias, 30.08.2021_
+
+After some fighting with python code, textfiles - a huge amount of, git-stuff and computational power I managed to find a good set of parameters to shrink the dataset to a selection of files that are possible to analyse. And the results are provided in [03_workspace/states](https://github.com/josiasbruderer/bbs-for-independence/tree/main/03_workspace/states){:target_"blank"}. One analysis was run on the declaration and some additional files that mirror the spirit of the declaration quite well, the second analysis was run on all selected categories with filtering applied.
+
+In a nutshell the recieved data tells to things:
+
+1\. The evolution of bbs mirrors inside the textfiles:
+
+![docs per year](/assets/images/docs_per_year.png)
+
+2\. The textfiles are about technology (Octis LDA Topic Model 0):
+
+![Wordcloud LDA Topic 0](/assets/images/wc01.png)
+
+3\. The (early) internet is (and was) for porn (Octis LDA Topic Model 6):
+
+![Wordcloud LDA Topic 6](/assets/images/wc02.png)
+
+<iframe width="480" height="280" src="https://www.youtube.com/embed/LTJvdGcb7Fs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 ## The Power of R
 _Josias, 28.08.2021_
 
