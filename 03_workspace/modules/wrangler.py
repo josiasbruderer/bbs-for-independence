@@ -100,7 +100,7 @@ class cleaner(Thread):
                     charratioB = round(1 / len(content_raw) * len(re.findall("[A-z\ \.\"\,\!]", content_raw)), 2)
 
                 typ = "textfile"
-                if fname.name == "declarationbarlow1996.txt":
+                if fname.name == "declarationbarlow1996.txt" or data_name == "declaration":
                     typ = "declaration"
 
                 rxdate = re.compile(

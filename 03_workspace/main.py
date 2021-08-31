@@ -74,7 +74,10 @@ data_names = ["100", "adventure", "anarchy", "apple", "art", "artifacts", "bbs",
 data_names_exclude = ["fidonet-on-the-internet", "tap", "floppies", "exhibits", "artifacts",
                       "piracy", "art", "magazines", "digest"]  # categories that are excluded and removed from data_names
 file_filter = "^.*(\.(jpe?g|png|gif|bmp|zip|mp3|wav))|index\.html?$"  # use this to exclude by filenames
-metadata_file_filter = "(x['metadata']['charratioB'] > 0.95) & (x['metadata']['length'] > 300) & (x['metadata']['length'] < 30000)"
+metadata_file_filter = "(x['metadata']['charratioB'] > 0.95) & " \
+                       "(x['metadata']['length'] > 300) & (x['metadata']['length'] < 30000)"
+metadata_file_filter_declaration = "(x['metadata']['charratioB'] > 0.8) & " \
+                                   "(x['metadata']['length'] > 300) & (x['metadata']['length'] < 30000)"
 data_dir = Path(project_path / "02_datasets/")
 models_dir = Path(project_path / "03_workspace/models/")
 analysis_dir = Path(project_path / "03_workspace/analysis/")
@@ -177,7 +180,9 @@ if "metadata-filtering" not in skip_steps:
     for key in dataset:
         d_tmp = []
         for x in dataset[key]:
-            if eval(metadata_file_filter):
+            if key == "declaration" and eval(metadata_file_filter_declaration):
+                d_tmp.append(x)
+            elif eval(metadata_file_filter):
                 d_tmp.append(x)
         dataset[key] = d_tmp
 
