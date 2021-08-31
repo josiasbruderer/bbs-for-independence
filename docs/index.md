@@ -5,7 +5,7 @@ It is done. Feel free to download the final paper here:
 
 [09_Publication/210831_HSA_Josias-Bruderer_Vom-BBS-zur-Declaration-of-the-Independence-of-Cyberspace.pdf](https://github.com/josiasbruderer/bbs-for-independence/raw/main/09_publication/210831_HSA_Josias-Bruderer_Vom-BBS-zur-Declaration-of-the-Independence-of-Cyberspace.pdf){:target="_blank"}
 
-<img src="/assets/images/done.webp">
+<img src="https://raw.githubusercontent.com/josiasbruderer/bbs-for-independence/main/docs/assets/images/done.webp">
 
 ## Endgame
 _Josias, 30.08.2021_
