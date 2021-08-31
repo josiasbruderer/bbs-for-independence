@@ -1,3 +1,12 @@
+## Done
+_Josias, 31.08.2021_
+
+It is done. Feel free to download the final paper here:
+
+[09_Publication/210831_HSA_Josias-Bruderer_Vom-BBS-zur-Declaration-of-the-Independence-of-Cyberspace.pdf](https://github.com/josiasbruderer/bbs-for-independence/raw/main/09_publication/210831_HSA_Josias-Bruderer_Vom-BBS-zur-Declaration-of-the-Independence-of-Cyberspace.pdf){:target="_blank"}
+
+<img src="/assets/images/done.webp">
+
 ## Endgame
 _Josias, 30.08.2021_
 
@@ -6,7 +15,7 @@ The endgame started - almost everything is ready. The three things that needs to
 ## Managed to upload states
 _Josias, 30.08.2021_
 
-After some fighting with python code, textfiles - a huge amount of, git-stuff and computational power I managed to find a good set of parameters to shrink the dataset to a selection of files that are possible to analyse. And the results are provided in [03_workspace/states](https://github.com/josiasbruderer/bbs-for-independence/tree/main/03_workspace/states){:target_"blank"}. One analysis was run on the declaration and some additional files that mirror the spirit of the declaration quite well, the second analysis was run on all selected categories with filtering applied.
+After some fighting with python code, textfiles - a huge amount of, git-stuff and computational power I managed to find a good set of parameters to shrink the dataset to a selection of files that are possible to analyse. And the results are provided in [03_workspace/states](https://github.com/josiasbruderer/bbs-for-independence/tree/main/03_workspace/states){:target="_blank"}. One analysis was run on the declaration and some additional files that mirror the spirit of the declaration quite well, the second analysis was run on all selected categories with filtering applied.
 
 In a nutshell the recieved data tells to things:
 
