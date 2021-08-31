@@ -16,6 +16,13 @@ This repository will store all files related to the term paper _from BBS to the 
 Here are some commands that will help to navigate through the repo and _get things running._
 
 ```bash
+#install git-lfs and fetch files
+pamac install git-lfs
+cd bbs-for-independence
+git lfs intall
+git lfs fetch
+git lfs pull
+
 #serve github pages locally
 cd docs
 bundle exec jekyll serve
