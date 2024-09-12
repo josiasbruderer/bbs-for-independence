@@ -1,0 +1,3 @@
+This folder contains snapshot-like states of processed data. 
+
+States are archived and no longer available. You can generate them anytime again using the provided source code.

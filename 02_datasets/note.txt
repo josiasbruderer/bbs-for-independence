@@ -1,0 +1,2 @@
+Datasets won't won't be published on github because of license concerns.
+All required datasets will be downloaded and processed in 03_workspace.
